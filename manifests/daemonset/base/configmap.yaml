@@ -1,0 +1,12 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: reconciler-config
+  namespace: route-whisperer-daemonset
+immutable: false
+data:
+  bgp_vrf: bgp
+  configmap_label_selector: route-whisperer.openinfra.io
+  webhook_server_namespace: route-whisperer
+  sleep_duration: '10'

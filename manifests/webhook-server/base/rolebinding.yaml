@@ -1,0 +1,14 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: route-whisperer
+  namespace: route-whisperer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: route-whisperer
+subjects:
+  - kind: ServiceAccount
+    name: route-whisperer
+    namespace: route-whisperer

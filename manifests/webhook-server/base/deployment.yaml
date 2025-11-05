@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: route-whisperer-webhook-server
+  namespace: route-whisperer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: route-whisperer-webhook-server
+  template:
+    metadata:
+      labels:
+        app: route-whisperer-webhook-server
+    spec:
+      containers:
+        - command:
+            - python3.11
+            - webhook-server.py
+            - -c
+            - /certs/tls.crt
+            - -k
+            - /certs/tls.key
+            - -p
+            - '8443'
+            - '-n'
+            - route-whisperer
+            - --debug
+          image: quay.io/nasx/route-whisperer:latest
+          imagePullPolicy: Always
+          name: pywsgi
+          ports:
+            - containerPort: 8443
+              name: pywsgi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: '1'
+              memory: 512Mi
+            requests:
+              cpu: 50m
+              memory: 256Mi
+          serviceAccount: route-whisperer
+          serviceAccountName: route-whisperer
+          volumeMounts:
+            - mountPath: /certs
+              name: config-tls
+      volumes:
+        - name: config-tls
+          secret:
+            secretName: route-whisperer-tls

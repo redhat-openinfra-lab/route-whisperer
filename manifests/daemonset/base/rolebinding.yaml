@@ -1,0 +1,28 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: route-reconciler
+  namespace: route-whisperer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: route-reconciler
+subjects:
+  - kind: ServiceAccount
+    name: route-whisperer-daemonset
+    namespace: route-whisperer-daemonset
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: route-reconciler
+  namespace: route-whisperer-daemonset
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: route-reconciler
+subjects:
+  - kind: ServiceAccount
+    name: route-whisperer-daemonset
+    namespace: route-whisperer-daemonset

@@ -1,0 +1,38 @@
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    service.beta.openshift.io/inject-cabundle: "true"
+  name: route-whisperer
+webhooks:
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      caBundle: "" # Injected by service-ca
+      service:
+        name: route-whisperer-webhook-server
+        namespace: route-whisperer
+        path: /mutate
+        port: 8443
+    failurePolicy: Fail
+    name: route-whisperer.openinfra.lab
+    # namespaceSelector:
+    #   matchExpressions:
+    #     - key: kubernetes.io/metadata.name
+    #       operator: In
+    #       values:
+    #         - openshift-frr-k8s
+    rules:
+      - apiGroups:
+          - k8s.ovn.org
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - DELETE
+          - UPDATE
+        resources:
+          - clusteruserdefinednetworks
+        scope: Cluster
+    sideEffects: None

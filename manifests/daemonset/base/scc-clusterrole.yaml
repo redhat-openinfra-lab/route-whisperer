@@ -1,0 +1,14 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: route-whisperer-daemonset-scc
+rules:
+  - apiGroups:
+      - security.openshift.io
+    resourceNames:
+      - route-whisperer-daemonset
+    resources:
+      - securitycontextconstraints
+    verbs:
+      - use

@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: route-reconciler
+  namespace: route-whisperer-daemonset
+spec:
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: route-reconciler
+  template:
+    metadata:
+      labels:
+        app: route-reconciler
+    spec:
+      containers:
+      - command:
+        - /daemonset.sh
+        env:
+        - name: MY_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        image: quay.io/nasx/route-whisperer:latest
+        imagePullPolicy: Always
+        name: reconciler
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+          - name: run-netns
+            mountPath: /run/netns
+            mountPropagation: HostToContainer
+      dnsPolicy: ClusterFirst
+      hostNetwork: true
+      hostPID: false
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccount: route-whisperer-daemonset
+      serviceAccountName: route-whisperer-daemonset
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: run-netns
+          hostPath:
+            path: /run/netns
+            type: Directory
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate

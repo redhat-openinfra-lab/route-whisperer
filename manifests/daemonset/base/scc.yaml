@@ -1,0 +1,34 @@
+---
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: route-whisperer-daemonset
+allowHostPorts: false
+allowPrivilegedContainer: false
+allowHostPID: true
+allowHostNetwork: true
+allowPrivilegeEscalation: false
+allowHostDirVolumePlugin: true
+allowHostIPC: false
+allowedCapabilities:
+  - NET_ADMIN
+  # - NET_RAW
+  # - CAP_SYS_PTRACE
+defaultAddCapabilities: null
+requiredDropCapabilities: null
+seLinuxContext:
+  type: MustRunAs
+readOnlyRootFilesystem: false
+users: []
+runAsUser:
+  type: RunAsAny
+groups: []
+supplementalGroups:
+  type: MustRunAs
+fsGroup:
+  type: MustRunAs
+priority: null
+volumes:
+  - configMap
+  - hostPath
+  - projected
