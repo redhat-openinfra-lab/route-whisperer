@@ -14,6 +14,7 @@ spec:
       labels:
         app: route-whisperer-webhook-server
     spec:
+      serviceAccountName: route-whisperer
       containers:
         - command:
             - python3.11
@@ -47,8 +48,6 @@ spec:
             requests:
               cpu: 50m
               memory: 256Mi
-          serviceAccount: route-whisperer
-          serviceAccountName: route-whisperer
           volumeMounts:
             - mountPath: /certs
               name: config-tls
